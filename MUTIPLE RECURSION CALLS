@@ -1,0 +1,282 @@
+PRINT ALL SUBESEQUENCES
+PRINT ONLY ONE SUBSEQUENCE
+PERFECT SUM
+better string.
+ MERGE SORT
+ SUBSET SUMS 
+/********************** PRINT ALL SUBESEQUENCES******************************/
+import java.util.;
+public class Main
+{
+       private static void printSub(int i, int[] arr, ArrayListInteger list) {
+        if (i == arr.length) {
+            System.out.println(list.toString());
+            return;
+        }
+        list.add(arr[i]);
+        printSub(i + 1, arr, list);
+        list.remove(list.size() - 1);
+        printSub(i + 1, arr, list);
+    }
+
+
+	public static void main(String[] args) {
+		   int[] arr = { 3, 1, 2 };
+        ArrayListInteger list = new ArrayList();
+        printSub(0, arr, list);
+	}
+}
+
+
+
+/************************************** PRINT ONLY ONE SUBSEQUENCE*************************************/
+mport java.util.*;
+
+public class Main {
+    public static boolean oneSubsequence(int i, int arr[], int len, ArrayList<Integer> list) {
+        // Base condition
+        if (i == len) {
+            if (list.size() > 0) {  // Ensuring non-empty subsequence
+                System.out.println(list.toString());
+                return true;  // Found one valid subsequence
+            }
+            return false;
+        }
+
+        // Include the current element
+        list.add(arr[i]);
+        if (oneSubsequence(i + 1, arr, len, list)) {
+            return true;
+        }
+
+        // Backtrack - Remove last added element
+        list.remove(list.size() - 1);
+
+        // Exclude the current element
+        if (oneSubsequence(i + 1, arr, len, list)) {
+            return true;
+        }
+
+        return false; // If no valid subsequence is found
+    }
+
+    public static void main(String[] args) {
+        int arr[] = {3, 2, 1};
+        int len = arr.length;
+        ArrayList<Integer> list = new ArrayList<>();
+        oneSubsequence(0, arr, len, list);
+    }
+}
+/******************************************** PERFECT SUM***********************************************/
+============================================= BRUTE Force===============================================
+
+class Solution {
+    // Function to calculate the number of subsets with a given sum
+    public int perfectSum(int[] nums, int target) {
+        // code here
+    ArrayList<Integer> list=new ArrayList<Integer>();
+    int sum=0;
+     return sums(0,nums,sum,target,list);
+    }
+    public int sums(int i,int arr[],int sum,int target,ArrayList<Integer> list)
+    {
+        if(sum>target)
+        {
+            return 0;
+        }
+       int left=0,right=0;
+        if(i>=arr.length)
+        {
+             if(sum == target)
+             {
+                 return 1;
+             }
+             return 0;
+        }
+        // list.add(arr[i]);
+        sum+=arr[i];
+       if(sum<=target)
+       {
+         left =sums(i+1,arr,sum,target,list);
+       }
+       
+    //   list.remove(list.size() -1);
+           sum-=arr[i];
+  if(sum<=target)
+       {
+         right = sums(i+1,arr,sum,target,list);
+       }
+       
+        return left+right;
+        
+    }
+    
+}
+========================================= OPTIMIZED ============================================
+
+class Solution {
+    // Function to calculate the number of subsets with a given sum
+    public int perfectSum(int[] nums, int target) {
+   
+    int sum=0;
+     Map<String, Integer> memo = new HashMap<>();
+     return sums(0,nums,sum,target,memo);
+    }
+   private int sums(int i, int[] arr, int sum, int target, Map<String, Integer> memo) {
+        if (i == arr.length) {
+            return sum == target ? 1 : 0;
+        }
+        
+        String key = i + "," + sum;
+        if (memo.containsKey(key)) {
+            return memo.get(key);
+        }
+
+        int include = sums(i + 1, arr, sum + arr[i], target, memo);
+        int exclude = sums(i + 1, arr, sum, target, memo);
+
+        memo.put(key, include + exclude);
+        return include + exclude;
+    }
+    
+}
+
+/***************************************************Given a pair of strings of equal lengths, Geek wants to find the better string. The better string is the string having more number of distinct subsequences.
+If both the strings have equal count of distinct subsequence then return str1.
+
+Example 1:
+
+Input:
+str1 = "gfg", str2 = "ggg"
+Output: "gfg"
+Explanation: "gfg" have 6 distinct subsequences whereas "ggg" have 3 distinct subsequences. 
+Example 2:
+
+Input: str1 = "a", str2 = "b"
+Output: "a"
+Explanation: Both the strings have only 1 distinct subsequence. *********************************************************************************/
+
+
+
+// User function Template for Java
+
+class Solution {
+    public static String betterString(String str1, String str2) {
+        // Code here
+        String ans="";
+        HashMap<String,Integer> map1 =new HashMap<String,Integer>();
+        HashMap<String,Integer> map2 =new HashMap<String,Integer>();
+        subsequencestr(0,str1,ans,map1);
+      subsequencestr(0,str2,ans,map2);
+        if(map1.size()>=map2.size())
+        {
+            return str1;
+        }
+        return str2;
+    }
+    public static int subsequencestr(int i,String str,String ans,HashMap<String,Integer> map)
+    {
+        if(i>= str.length())
+        {
+            if(!map.containsKey(ans))
+            {
+                map.put(ans,1);
+               
+            }
+             return 1;
+        }
+   
+      int include= subsequencestr(i+1,str,ans+str.charAt(i),map);
+      int exclude= subsequencestr(i+1,str,ans,map);
+         return include+exclude;
+         
+        
+    }
+    
+}
+
+/************************************************* MERGE SORT*********************************************/
+class Solution {
+    public int[] sortArray(int[] nums) {
+        mergesort(nums,0,nums.length-1);
+        return nums;
+    }
+    public void mergesort(int nums[],int low,int high)
+    {
+        if(low>=high)
+        {
+            return;
+        }
+        int mid=(low+high)/2;
+        mergesort(nums,low,mid);
+        mergesort(nums,mid+1,high);
+        merge(nums,low,mid,high);
+    }
+    public void merge(int arr[],int low,int mid,int high)
+    {
+        int left=low;
+        int right=mid+1;
+        int temp[]=new int[high-low+1];
+        int idx=0;
+        while(left<=mid && right<=high)
+        {
+             if(arr[left]>=arr[right]  )
+             {
+                    temp[idx]=arr[right];
+                    right++;
+             }
+             else if(arr[left]<arr[right])
+             {
+                    temp[idx]=arr[left];
+                    left++;
+             }
+            //  if (arr[left] <= arr[right]) {  // Corrected comparison for ascending order
+            //     temp[idx] = arr[left];
+            //     left++;
+            // } else {
+            //     temp[idx] = arr[right];
+            //     right++;
+            // }
+             idx++;
+        }
+        while(left<=mid)
+        {
+              temp[idx]=arr[left];
+                    left++;
+              idx++;
+        }
+        while( right<=high)
+        {
+             temp[idx]=arr[right];
+              right++;
+               idx++;
+        }
+         int x=0;
+        for(int j=low;j<=high;j++)
+        {
+            arr[j]=temp[x];
+            x++;
+        }
+    }
+}
+
+/************************************************************ SUBSET SUMS **************************************************/
+class Solution {
+    public ArrayList<Integer> subsetSums(int[] arr) {
+        // code here
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        sum(0,arr,0,list);
+        return list;
+        
+    }
+    public void sum(int i,int arr[],int sum,ArrayList<Integer> list)
+    {
+        if(i>=arr.length)
+        {
+            list.add(sum);
+            return;
+        }
+        sum(i+1,arr,sum+arr[i],list);
+        sum(i+1,arr,sum,list);
+    }
+}
